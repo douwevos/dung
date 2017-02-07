@@ -14,12 +14,9 @@ import net.natpad.dung.StreamHelper;
 import net.natpad.dung.module.IDependency;
 import net.natpad.dung.module.Module;
 import net.natpad.dung.module.dependency.PkgConfig;
-import net.natpad.dung.module.dependency.RawDependency;
-import net.natpad.dung.module.model.DependenciesDescr;
 import net.natpad.dung.module.model.ExportDescr;
 import net.natpad.dung.module.model.ExportHeadersDescr;
 import net.natpad.dung.module.model.ModuleDescr;
-import net.natpad.dung.module.model.PkgConfigDependencyDescr;
 import net.natpad.dung.module.task.cc.CcArg;
 import net.natpad.dung.module.task.cc.CcCompilerSettings;
 import net.natpad.dung.module.task.cc.CcConfigSet;
@@ -33,6 +30,7 @@ import net.natpad.dung.module.task.types.FileBundle;
 import net.natpad.dung.module.task.types.PathInPath;
 import net.natpad.dung.run.Context;
 import net.natpad.dung.run.Session;
+import net.natpad.dung.thread.ThreadPool;
 import net.natpad.dung.workspace.Workspace;
 
 public class Cc extends Task {
@@ -84,18 +82,13 @@ public class Cc extends Task {
 	
 	@Override
 	public void runTask(Session session) throws Exception {
-
-		DependenciesDescr dependencies = session.module.moduleFileDescr.getModuleDescr().dependencies;
-		
 		HashSet<String> moduleNamesConfigured = new HashSet<String>();
 		CcConfigSet ccConfigSet = new CcConfigSet();
 		ccConfigSet.add(compilerConfigSet);
 		
-		
 		for(IDependency dep : session.module.dependencies) {
 			configure(session.context, dep, ccConfigSet, moduleNamesConfigured);
 		}
-		
 		
     	CcCompilerSettings compilerSettings = new CcCompilerSettings();
     	configureCompiler(session, compilerSettings);
@@ -300,17 +293,6 @@ public class Cc extends Task {
 	}
 
 
-
-
-	private void configure(CcConfigSet ccConfigSet, PkgConfigDependencyDescr descr) {
-   		PkgConfig pkgConfig = new PkgConfig();
-		pkgConfig.setpackage(descr.packageName);
-		ccConfigSet.add(pkgConfig);
-	}
-
-
-
-
 	private void compileFile(ThreadPool threadPool, File source, File dest, CcCompilerSettings compilerSettings, File dependencies) {
 //        log("source="+source.getAbsolutePath(), Project.MSG_VERBOSE);
 		
@@ -350,133 +332,5 @@ public class Cc extends Task {
 	public String toString() {
 		return "Cc [sourceFolders=" + srcFileBundles + "]";
 	}
-
-	
-	
-	
-
-    static class ActionHandler implements Runnable {
-    	
-    	Object notifyme;
-    	ExecAction action;
-    	boolean stopit = false;
-    	int exitCode;
-    	
-    	public ActionHandler(Object notifyme) {
-    		this.notifyme = notifyme;
-    		exitCode = 0;
-    	}
-    	
-    	public synchronized void postAction(ExecAction action) {
-    		this.action = action;
-    		notifyAll();
-    	}
-    	
-    	public void run() {
-    		ExecAction torun = null;
-    		boolean donotify = false;
-    		while(!stopit) {
-    			synchronized(this) {
-					if (action!=null) {
-						torun = action;
-					} else { 
-						try {
-							wait(2000);
-						} catch (InterruptedException e) {
-						}
-    				}
-    			}
-    			if (torun!=null) {
-   					exitCode = torun.runAction();
-    				torun = null;
-	    			synchronized(this) {
-						action = null;
-						donotify = true;
-	    			}
-				}
-    			
-    			if (donotify) {
-    				synchronized (notifyme) {
-    					notifyme.notifyAll();
-					}
-    			}
-    		}
-    	}
-    }
-        
-
-    static class ThreadPool {
-
-    	ArrayList<ExecAction> actionQueue = new ArrayList<ExecAction>();
-    	ActionHandler handlers[];
-    	int exitcode;
-    	
-    	public ThreadPool() {
-    		Runtime runtime = Runtime.getRuntime();
-            int nrOfProcessors = runtime.availableProcessors();
-
-            handlers = new ActionHandler[nrOfProcessors+2];
-//            handlers = new ActionHandler[1];
-            
-    		for(int idx=0; idx<handlers.length; idx++) {
-    			handlers[idx] = new ActionHandler(this);
-    			new Thread(handlers[idx]).start();
-    		}
-		}
-    	
-    	
-    	public void postAction(ExecAction action) {
-    		while(true) {
-    			synchronized (this) {
-    				for(int idx=0; idx<handlers.length; idx++) {
-    					synchronized (handlers[idx]) {
-    						if (handlers[idx].exitCode!=0) {
-    							exitcode = handlers[idx].exitCode;
-    							return;
-    						}
-							if (handlers[idx].action == null) {
-								handlers[idx].postAction(action);
-								return;
-							}
-						} 
-    				}
-    				try {
-						this.wait(5000);
-					} catch (InterruptedException e) {
-					}
-				}
-    		}
-    	}
-    	
-    	
-    	public void finish() {
-    		boolean keep_alive = true;
-    		while(keep_alive) {
-    			synchronized(this) {
-    				keep_alive = false;
-    				for(int idx=0; idx<handlers.length; idx++) {
-    					synchronized (handlers[idx]) {
-    						if (handlers[idx].exitCode!=0) {
-    							exitcode = handlers[idx].exitCode;
-    						}
-    						
-							if (handlers[idx].action != null) {
-								keep_alive = true;
-							} else {
-								handlers[idx].stopit = true;
-							}
-						} 
-    				}
-    				if (keep_alive) {
-	    				try {
-							this.wait(5000);
-						} catch (InterruptedException e) {
-						}
-    				}
-				}
-    		}
-    	}
-    	
-    }
 	
 }
