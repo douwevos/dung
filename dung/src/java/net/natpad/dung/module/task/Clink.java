@@ -11,7 +11,6 @@ import net.natpad.dung.module.DependencyTree;
 import net.natpad.dung.module.IDependency;
 import net.natpad.dung.module.Module;
 import net.natpad.dung.module.dependency.PkgConfig;
-import net.natpad.dung.module.model.DependenciesDescr;
 import net.natpad.dung.module.model.ExportDescr;
 import net.natpad.dung.module.model.ExportLibraryDescr;
 import net.natpad.dung.module.model.ModuleDescr;
@@ -75,12 +74,8 @@ public class Clink extends Task {
 	
 	@Override
 	public void runTask(Session session) throws Exception {
-
-		DependenciesDescr dependencies = session.module.moduleFileDescr.getModuleDescr().dependencies;
-		
 		HashSet<String> moduleNamesConfigured = new HashSet<String>();
 		CcConfigSet ccConfigSet = new CcConfigSet();
-		
 		
 		DependencyTree dependencyTree = new DependencyTree(session.module);
 		for(int level=0; level<dependencyTree.levelCount(); level++) {
@@ -91,19 +86,10 @@ public class Clink extends Task {
 					Module module = (Module) descr;
 					configure(session.context, module, ccConfigSet, moduleNamesConfigured);
 				} else if (descr instanceof PkgConfig) {
-					PkgConfig pkgConfig = (PkgConfig) descr;
 					configure(ccConfigSet, (PkgConfig) descr);
 				} else if (descr instanceof ICcConfigItem) {
 					ccConfigSet.addItem((ICcConfigItem) descr);
 				}
-//				if (descr instanceof PkgConfigDependencyDescr) {
-//					configure(ccConfigSet, (PkgConfigDependencyDescr) descr);
-//				} else if (descr instanceof ModuleDependencyDescr) {
-//					String moduleName = ((ModuleDependencyDescr) descr).moduleName;
-////				System.out.println("moduleName="+moduleName);
-//					Module module = session.context.moduleMap.get(moduleName);
-//					configure(session.context, module, ccConfigSet, moduleNamesConfigured);
-//				}
 			}
 		}
 		
@@ -149,19 +135,14 @@ public class Clink extends Task {
 	private void link(Session session, CcLinkerSettings linkerSettings) {
     	ArrayList<ICcConfigItem> flatten = linkerConfigSet.flatten(null);
     	
-    	
     	for(ICcConfigItem ccitem : flatten) {
     		ccitem.setup(session, linkerSettings);
     	}
     	
     	ArrayList<String> argList = linkerSettings.getExecAsArgList();
     	
-    	
-    	
     	Path outPath = session.createBuildPath(output);
-    	
     	argList.add("-o"+outPath);
-    	
 
 		String[] optflat = argList.toArray(new String[argList.size()]);
 		
@@ -175,8 +156,6 @@ public class Clink extends Task {
 			log(LogLevel.INFO, "link "+outPath);
 		}
 
-		
-		
 		
 		try {
 			Runtime runtime = Runtime.getRuntime();
@@ -237,13 +216,8 @@ public class Clink extends Task {
 		}
 	}
 
-	
-	
-
     private void configure(Session session, CcConfigSet ccConfigSet) throws IOException {
     	ModuleDescr moduleDescr = session.module.moduleFileDescr.getModuleDescr();
-    	
-    	
     	
     	ExportDescr export = moduleDescr.export;
     	if (export.headers!=null) {
@@ -261,147 +235,9 @@ public class Clink extends Task {
     	}
 	}
 
-
 	private void configure(CcConfigSet ccConfigSet, PkgConfig pkgConfig) {
 		ccConfigSet.add(pkgConfig);
 	}
 	
 }
 
-
-/*
-/usr/bin/gcc 
-/home/superman/cpp-workspace/trunk/natpad.ide/natpad/build/main/natpad-app.o
-/home/superman/cpp-workspace/trunk/natpad.ide/natpad/build/main/natpad-window.o
-/home/superman/cpp-workspace/trunk/natpad.ide/natpad/build/main/natpad.o
--L/home/superman/cpp-workspace/trunk/natpad.ide/natpad/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/jordanella/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/mule/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/tern/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/jaguar/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/jaguar-decompiler/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/jaguar-bytecode/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/cheetah/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/elk/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/moose-explorer/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/moose/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/viper/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/dragonfly/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/leafhopper/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/cow/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/worm/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/shoveler/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/chameleon/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/caterpillar/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/codeparsing/build
--L/home/superman/cpp-workspace/trunk/natpad.ide/gvlib/build
--lnatpad
--ljordanella
--lmule
--ltern
--ljaguar
--lz
--ljaguar-decompiler
--ljaguar-bytecode
--lcheetah
--lelk
--lmoose-explorer
--lmoose
--lviper
--ldragonfly
--lleafhopper
--lcow
--lworm
--lshoveler
--lchameleon
--lcaterpillar
--lm
--lcodeparsing
--lgvlib
--lgtk-3
--latk-1.0
--lgio-2.0
--lgdk-3
--lpangocairo-1.0
--lgdk_pixbuf-2.0
--lcairo-gobject
--lpango-1.0
--lcairo
--lgobject-2.0
--lglib-2.0
--lX11
--o/home/superman/cpp-workspace/trunk/natpad.ide/natpad/build/natpad
- */
-
-
-
-
-/*
-
- 
-/usr/bin/x86_64-w64-mingw32-gcc
-/home/superman/work/trunk/natpad.ide/natpad/build/main/natpad-app.o
-/home/superman/work/trunk/natpad.ide/natpad/build/main/natpad-window.o
-/home/superman/work/trunk/natpad.ide/natpad/build/main/natpad.o
--L/home/superman/work/trunk/natpad.ide/natpad/build
--L/home/superman/work/trunk/natpad.ide/jordanella/build
--L/home/superman/work/trunk/natpad.ide/mule/build
--L/home/superman/work/trunk/natpad.ide/tern/build
--L/home/superman/work/trunk/natpad.ide/jaguar/build
--L/home/superman/work/trunk/natpad.ide/jaguar-decompiler/build
--L/home/superman/work/trunk/natpad.ide/jaguar-bytecode/build
--L/home/superman/work/trunk/natpad.ide/cheetah/build
--L/home/superman/work/trunk/natpad.ide/elk/build
--L/home/superman/work/trunk/natpad.ide/moose-explorer/build
--L/home/superman/work/trunk/natpad.ide/moose/build
--L/home/superman/work/trunk/natpad.ide/viper/build
--L/home/superman/work/trunk/natpad.ide/dragonfly/build
--L/home/superman/work/trunk/natpad.ide/leafhopper/build
--L/home/superman/work/trunk/natpad.ide/cow/build
--L/home/superman/work/trunk/natpad.ide/worm/build
--L/home/superman/work/trunk/natpad.ide/shoveler/build
--L/home/superman/work/trunk/natpad.ide/chameleon/build
--L/home/superman/work/trunk/natpad.ide/caterpillar/build
--L/home/superman/work/trunk/natpad.ide/codeparsing/build
--L/home/superman/work/trunk/natpad.ide/gvlib/build
--L/home/superman/work/trunk/natpad.ide/build/dll/devel/usr/x86_64-w64-mingw32/sys-root/mingw/lib
--lnatpad
--ljordanella
--lmule
--ltern
--ljaguar
--lz
--ljaguar-decompiler
--ljaguar-bytecode
--lcheetah
--lelk
--lmoose-explorer
--lmoose
--lviper
--ldragonfly
--lleafhopper
--lcow
--lworm
--lshoveler
--lchameleon
--lcaterpillar
--lm
--lcodeparsing
--lgvlib
--lgtk-3
--latk-1.0
--lgio-2.0
--lgdk-3
--lpangowin32-1.0
--lpangocairo-1.0
--lcairo-gobject
--lpango-1.0
--lcairo
--lgdk_pixbuf-2.0
--lgobject-2.0
--lglib-2.0
--lintl -mwindows -gstabs -mms-bitfields
--luserenv /home/superman/work/trunk/natpad.ide/build/natpad.res -o/home/superman/work/trunk/natpad.ide/natpad/build/natpad
- 
-
- * */

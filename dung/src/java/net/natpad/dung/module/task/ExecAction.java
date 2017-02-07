@@ -6,8 +6,9 @@ import java.io.IOException;
 import net.natpad.dung.StreamHelper;
 import net.natpad.dung.run.BashHelper;
 import net.natpad.dung.run.ProcessInputStreamer;
+import net.natpad.dung.thread.IAction;
 
-public class ExecAction {
+public class ExecAction implements IAction {
 
 	private final String prefix;
 	private final String args[];

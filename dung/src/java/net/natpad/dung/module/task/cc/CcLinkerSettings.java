@@ -48,7 +48,7 @@ public class CcLinkerSettings {
 		if (path!=null) {
 			pathtxt = path.getAbsolutePath();
 		} else {
-			pathtxt = "/usr/bin/gcc";
+			pathtxt = "/usr/bin/g++";
 		}
 		result.add(pathtxt);
 		result.addAll(objectFiles);

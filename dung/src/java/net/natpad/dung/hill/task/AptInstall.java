@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.lang.ProcessBuilder.Redirect;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,11 +20,11 @@ public class AptInstall extends Task {
 	@Override
 	public void run(HillSession session) throws Exception {
 		
-		String args[] = new String[] { "/usr/bin/dpkg", "-la"};
+		String args[] = new String[] { "/usr/bin/dpkg", "-l", name};
 		List<String> installed = execAndEnlist(args);
 		for(String l : installed) {
-			if (l!=null && l.length()>2) {
-				if (l.substring(2).startsWith(name)) {
+			if (l!=null && l.startsWith("ii")) {
+				if (l.substring(2).trim().startsWith(name)) {
 					log(LogLevel.INFO, "package '"+name+"' already installed");
 					return;
 				}

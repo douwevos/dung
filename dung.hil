@@ -1,0 +1,13 @@
+workspace {
+	name 'dung';
+	
+	ask {
+		property 'basedir';
+		question 'Enter trunk directory of dung';
+		default '.';
+	}
+	
+
+	modulepath '[%basedir%]';
+	modulepath '[%basedir%]/../natpad.cup';
+}

@@ -20,9 +20,6 @@ import net.natpad.dung.run.ProcessInputStreamer;
 
 public class Autoinstall extends Task {
 
-	
-	
-
 	static String lastLoadedReproUrl;
 	static String lastText;
 	
