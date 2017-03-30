@@ -18,13 +18,13 @@ public class CcArg implements ICcConfigItem {
 
 	@Override
 	public void setup(Session session, CcCompilerSettings compilerSettings) {
-		compilerSettings.addArgument(value);
+	    compilerSettings.addArgument(session.resolveProperties(value));
 	}
 
 	
 	@Override
 	public void setup(Session session, CcLinkerSettings linkerSettings) {
-		linkerSettings.addArgument(value);
+		linkerSettings.addArgument(session.resolveProperties(value));
 	}
 
 }

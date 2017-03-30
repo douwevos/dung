@@ -7,14 +7,20 @@ _dung()
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
-    opts="--help --verbose --version"
+    opts="-v -r -n"
 
     if [[ ${cur} == -* ]] ; then
         COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
         return 0
+    elif [ "${prev}" = "select" ] ; then
+       WSS=`/usr/bin/dung list-workspaces | awk '{print substr($1,1)}'`
+       COMPREPLY=( $(compgen -W "${WSS}" -- ${cur}))
+    elif [ "${prev}" = "install" ] ; then
+       WSS=`ls | grep .hil$`
+       COMPREPLY=( $(compgen -W "${WSS}" -- ${cur}))
     else
-	MODULES=`/usr/bin/dung-hill list-modules | awk '{print $2}'` 
-	COMPREPLY=( $(compgen -W "${MODULES}" -- ${cur}))
+	   MODULES=`/usr/bin/dung list-modules | awk '{print $2}'` 
+	   COMPREPLY=( $(compgen -W "list-modules list-workspaces clear tree purge install select remove ${MODULES}" -- ${cur}))
     fi
 }
 complete -F _dung dung 

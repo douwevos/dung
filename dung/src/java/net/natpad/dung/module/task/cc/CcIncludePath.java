@@ -23,7 +23,7 @@ public class CcIncludePath implements ICcConfigItem {
 	@Override
 	public void setup(Session session, CcCompilerSettings compilerSettings) {
 		for(String i : paths) {
-			compilerSettings.addArgumentOnce("-I"+i, false);
+		    compilerSettings.addArgumentOnce("-I"+session.resolveProperties(i), false);
 		}
 		
 	}

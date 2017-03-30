@@ -21,7 +21,7 @@ public class CcLibraryPath implements ICcConfigItem {
 
 	@Override
 	public void setup(Session session, CcLinkerSettings linkerSettings) {
-		linkerSettings.addLibSearchPath(path);
+		linkerSettings.addLibSearchPath(session.resolveProperties(path));
 	}
 
 }

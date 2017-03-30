@@ -27,6 +27,6 @@ public class CcLibraryName implements ICcConfigItem {
 	
 	@Override
 	public void setup(Session session, CcLinkerSettings linkerSettings) {
-		linkerSettings.addLibName(name);
+		linkerSettings.addLibName(session.resolveProperties(name));
 	}
 }

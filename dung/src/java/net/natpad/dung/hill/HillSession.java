@@ -6,7 +6,7 @@ import java.io.StringReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import net.natpad.dung.WorkspaceHelper;
+import net.natpad.dung.WorkspaceService;
 import net.natpad.dung.eprops.EPropsContext;
 import net.natpad.dung.eprops.EPropsResolved;
 import net.natpad.dung.eprops.IEPropertyResolver;
@@ -19,7 +19,7 @@ import net.natpad.dung.workspace.Workspace;
 
 public class HillSession implements IEPropertyResolver {
 
-	WorkspaceHelper helper = new WorkspaceHelper();
+	WorkspaceService helper = new WorkspaceService();
 
 	public final Workspace workspace;
 	
