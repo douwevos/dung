@@ -55,20 +55,25 @@ public class Context {
 	public LogLevel getLogLevel() {
 		return logLevel;
 	}
+
+	public int loadModuleAndResolveDependencies() {
+            rootModule = loadModule(rootModuleName, false);
+            if (rootModule==null) {
+                    throw new RuntimeException("could not load main module:"+rootModuleName);
+            }
+
+            
+            return resolveDependencyTree();
+	}
 	
 	public void build(List<String> targetsToRun, boolean reverse, boolean nodeps) throws Exception {
 		if (targetsToRun.isEmpty()) {
 			targetsToRun.add("compile");
 			targetsToRun.add("package");
 		}
-		rootModule = loadModule(rootModuleName, false);
-		if (rootModule==null) {
-			throw new RuntimeException("could not load main module:"+rootModuleName);
-		}
 
+		int maxLevel = loadModuleAndResolveDependencies();
 		
-		int maxLevel = resolveDependencyTree();
-
 		if (nodeps) {
 			Session session = new Session(this, rootModule);
 			session.build(targetsToRun);

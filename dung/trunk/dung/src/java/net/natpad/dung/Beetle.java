@@ -133,7 +133,7 @@ public class Beetle {
 		
 		@Override
 		public void run() throws Exception {
-			WorkspaceHelper helper = new WorkspaceHelper();
+			WorkspaceService helper = new WorkspaceService();
 			Workspace workspace = helper.loadWorkspace();
 			Context context = new Context(workspace, module, helper.getWorkDir(workspace));
 			context.setLogLevel(logLevel);

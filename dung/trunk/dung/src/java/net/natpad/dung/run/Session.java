@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.natpad.dung.StreamHelper;
 import net.natpad.dung.eprops.EPropsContext;
 import net.natpad.dung.eprops.EPropsResolved;
 import net.natpad.dung.eprops.IEPropertyResolver;
@@ -72,8 +73,10 @@ public class Session implements IEPropertyResolver {
 		if (target==null) {
 			return;
 		}
-		System.out.println();
+		StreamHelper streamHelper = StreamHelper.getInstance();
+		streamHelper.posibleClear();
 		System.out.println((char) 27 +"[1;36m" + module.moduleFileDescr.getModuleDescr().name+"."+name + (char) 27 +"[0m" );
+		streamHelper.posiblePrintln("");
 		target.run(this);
 	}
 

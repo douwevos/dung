@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import net.natpad.dung.WorkspaceHelper.WorkspaceAndName;
+import net.natpad.dung.WorkspaceService.WorkspaceAndName;
 import net.natpad.dung.hill.HillInstaller;
 import net.natpad.dung.hill.HillRunner;
 import net.natpad.dung.workspace.Workspace;
@@ -92,7 +92,7 @@ public class Hill {
 		
 		@Override
 		public void run() throws Exception {
-			WorkspaceHelper helper = new WorkspaceHelper();
+			WorkspaceService helper = new WorkspaceService();
 			Workspace workspace = helper.loadWorkspace();
 			
 			ArrayList<String> enlisted = new ArrayList<String>();
@@ -155,7 +155,7 @@ public class Hill {
 		@Override
 		public void run() throws Exception {
 			
-			WorkspaceHelper workspaceHelper = new WorkspaceHelper();
+			WorkspaceService workspaceHelper = new WorkspaceService();
 			workspaceHelper.select(idOrName);
 		}
 	}
@@ -169,7 +169,7 @@ public class Hill {
 		@Override
 		public void run() throws Exception {
 			
-			WorkspaceHelper helper = new WorkspaceHelper();
+			WorkspaceService helper = new WorkspaceService();
 			List<WorkspaceAndName> enlist = helper.enlist();
 			for (WorkspaceAndName workspaceAndName : enlist) {
 				StringBuilder buf = new StringBuilder();
@@ -205,7 +205,7 @@ public class Hill {
 		
 		@Override
 		public void run() throws Exception {
-			WorkspaceHelper helper = new WorkspaceHelper();
+			WorkspaceService helper = new WorkspaceService();
 			Workspace workspace = helper.loadWorkspace();
 			ArrayList<File> modDirs = enlistAllModuleDirs(workspace);
 			for(File modDir : modDirs) {
