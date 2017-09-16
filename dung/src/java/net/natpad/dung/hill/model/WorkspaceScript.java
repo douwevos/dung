@@ -11,7 +11,7 @@ import net.natpad.dung.workspace.Module;
 import net.natpad.sht.model.BlockValue;
 import net.natpad.sht.model.Reference;
 
-public class WorkspaceDescr implements Iterable<Task> {
+public class WorkspaceScript implements Iterable<Task> {
 
 	public String name;
 
