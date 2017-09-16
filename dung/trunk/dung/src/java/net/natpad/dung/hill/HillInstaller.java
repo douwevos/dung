@@ -12,7 +12,7 @@ import net.natpad.dung.Template;
 import net.natpad.dung.WorkspaceService;
 import net.natpad.dung.WorkspaceService.WorkspaceAndName;
 import net.natpad.dung.hill.model.HillMapper;
-import net.natpad.dung.hill.model.WorkspaceDescr;
+import net.natpad.dung.hill.model.WorkspaceScript;
 import net.natpad.dung.hill.model.WorkspaceHolder;
 import net.natpad.dung.hill.task.Task;
 import net.natpad.dung.sht.ModelLoader;
@@ -96,7 +96,7 @@ public class HillInstaller implements HillRunner {
         }
     }
 
-    private Workspace createFromDescription(WorkspaceDescr workspaceDesc, String id) throws Exception {
+    private Workspace createFromDescription(WorkspaceScript workspaceDesc, String id) throws Exception {
         Workspace result = new Workspace();
         result.id = id;
 

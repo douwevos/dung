@@ -19,8 +19,6 @@ public class HillMapper extends Mapper {
 
 	public boolean full;
 	
-	public List<Reference> unresolvedTargets = new ArrayList<Reference>();
-	
 	TaskClassResolver resolver;
 	
 	public HillMapper(DungClassLoader classloader) {
@@ -33,7 +31,7 @@ public class HillMapper extends Mapper {
 	public <T> T map(Iterable<Reference> refs, Class<T> tclass, HashSet<Reference> referencesUsed) throws Exception {
 		T result = null;
 //		System.out.println("tclass="+tclass);
-		if (tclass == WorkspaceDescr.class) {
+		if (tclass == WorkspaceScript.class) {
 			result = mapWorkspaceDefinition(refs, tclass, referencesUsed);
 		} else {
 			result = super.map(refs, tclass, referencesUsed);
@@ -49,7 +47,7 @@ public class HillMapper extends Mapper {
 			referencesUsed = new HashSet<Reference>();
 		}
 		
-		WorkspaceDescr workspaceDefinition = new WorkspaceDescr();
+		WorkspaceScript workspaceScript = new WorkspaceScript();
 		
 		ArrayList<Reference> refsFiltered = new ArrayList<Reference>();
 		for(Reference reference : refs) {
@@ -60,10 +58,10 @@ public class HillMapper extends Mapper {
 				String refname = ((SimpleValue) refidref.getValue()).value;
 				refbv.remove(refidref);
 //				System.out.println("refbv="+refbv+",refname="+refname);
-				workspaceDefinition.references.put(refname, refbv);
+				workspaceScript.references.put(refname, refbv);
 			} else if ("template".equals(reference.refId)) {
 				referencesUsed.add(reference);
-				workspaceDefinition.templates.add(reference);
+				workspaceScript.templates.add(reference);
 			} else if ("module".equals(reference.refId)) {
 				BlockValue tempRefs = (BlockValue) reference.getValue();
 				Reference firstIdRef = tempRefs.getFirstReferenceById("name");
@@ -73,13 +71,13 @@ public class HillMapper extends Mapper {
 
 				Module module = map(tempRefs, type.moduleClass, null);
 				
-				workspaceDefinition.modules.put(templateId, module);
+				workspaceScript.modules.put(templateId, module);
 			} else {
 				refsFiltered.add(reference);
 			}
 		}
 		
-		result = (T) workspaceDefinition;
+		result = (T) workspaceScript;
 		mapFields(refsFiltered, tclass, result, referencesUsed);
 		mapAddMethods(refsFiltered, tclass, result, referencesUsed);
 
@@ -101,7 +99,7 @@ public class HillMapper extends Mapper {
 					throw new RuntimeException("no taks with name:"+reference.refId);
 				}
 				Task task = map(targetRefs, taskClassByName, null);
-				workspaceDefinition.addTask(task);
+				workspaceScript.addTask(task);
 			} else if (value instanceof SimpleValue) {
 				SimpleValue sval = (SimpleValue) value;
 				String text = sval.getValue();
@@ -109,7 +107,7 @@ public class HillMapper extends Mapper {
 				if (taskClassByName!=null) {
 					Constructor<? extends Task> constructor = taskClassByName.getDeclaredConstructor(String.class);
 					Task task = (Task) constructor.newInstance(text);
-					workspaceDefinition.addTask(task);
+					workspaceScript.addTask(task);
 				}
 			}
 			
