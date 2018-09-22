@@ -1,7 +1,8 @@
 package net.natpad.dung.module.dependency;
 
+import net.natpad.dung.expression.ArrayLiteral;
 import net.natpad.dung.expression.IExpressionValue;
-import net.natpad.dung.expression.StringLiteral;
+import net.natpad.dung.expression.StringLiteralProducer;
 import net.natpad.dung.module.IDependency;
 import net.natpad.dung.module.task.cc.CcCompilerSettings;
 import net.natpad.dung.module.task.cc.CcLinkerSettings;
@@ -22,11 +23,11 @@ public class RawDependency implements ICcConfigItem, IDependency {
 		if (id instanceof String) {
 			String st = (String) id;
 			if ("libPath".equals(st)) {
-				return new StringLiteral(raw.libPath);
+				return new ArrayLiteral<String>(raw.libPaths, StringLiteralProducer.instance());
 			} else if ("libName".equals(st)) {
-				return new StringLiteral(raw.libName);
+				return new ArrayLiteral<String>(raw.libNames, StringLiteralProducer.instance());
 			} else if ("headerPath".equals(st)) {
-				return new StringLiteral(raw.headerPath);
+				return new ArrayLiteral<String>(raw.headerPaths, StringLiteralProducer.instance());
 			}
 		}
 		return null;
@@ -44,24 +45,23 @@ public class RawDependency implements ICcConfigItem, IDependency {
 
 	@Override
 	public void setup(Session session, CcCompilerSettings compilerSettings) {
-		System.err.println("raw.headerPath="+raw.headerPath);
-		if (raw.headerPath!=null) {
-			String resolved = session.resolveProperties(raw.headerPath);
-			System.err.println("resolved="+resolved);
+//		System.err.println("raw.headerPath="+raw.headerPath);
+		for(String path : raw.headerPaths) {
+			String resolved = session.resolveProperties(path);
+//			System.err.println("resolved="+resolved);
 			compilerSettings.addArgumentOnce("-I"+resolved, false);
 		}
 	}
 
 	@Override
 	public void setup(Session session, CcLinkerSettings linkerSettings) {
-		if (raw.libName!=null) {
-			String resolved = session.resolveProperties(raw.libName);
-			linkerSettings.addLibName(resolved);
-		}
-		if (raw.libPath!=null) {
-			String resolved = session.resolveProperties(raw.libPath);
+		for(String path : raw.libPaths) {
+			String resolved = session.resolveProperties(path);
 			linkerSettings.addLibSearchPath(resolved);
-			
+		}
+		for(String name : raw.libNames) {
+			String resolved = session.resolveProperties(name);
+			linkerSettings.addLibName(resolved);
 		}
 	}
 }

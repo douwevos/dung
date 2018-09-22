@@ -2,7 +2,7 @@ module {
 
 	name 'dung.debian';
 	
-	dung.version '0.1';
+	dung.version '0.2';
 	
 	
 	distPath '[%=module.directory%]/dist';

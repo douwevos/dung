@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import net.natpad.dung.DungClassLoader;
+import net.natpad.dung.hill.task.SetProperty;
 import net.natpad.dung.hill.task.Task;
 import net.natpad.dung.workspace.Module;
 import net.natpad.dung.workspace.ModuleType;
@@ -108,6 +109,11 @@ public class HillMapper extends Mapper {
 					Constructor<? extends Task> constructor = taskClassByName.getDeclaredConstructor(String.class);
 					Task task = (Task) constructor.newInstance(text);
 					workspaceScript.addTask(task);
+				} else {
+					SetProperty setProperty = new SetProperty();
+					setProperty.name = reference.getId();
+					setProperty.value = sval.getValue();
+					workspaceScript.addTask(setProperty);
 				}
 			}
 			

@@ -128,6 +128,10 @@ public class Cc extends Task {
 				String base = fn.substring(0, fn.length()-2);
 				on = base+".o";
 				dn = base+".d";
+			} else if (fn.endsWith(".cc") || fn.endsWith(".CC")) {
+				String base = fn.substring(0,fn.length()-2);
+				on = base+".o";
+				dn = base+".d";
 			} else if (fn.endsWith(".cpp") || fn.endsWith(".CPP")) {
 				String base = fn.substring(0,fn.length()-4);
 				on = base+".o";
