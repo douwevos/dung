@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="dung/src/java"/>
+	<classpathentry kind="lib" path="dung/dung/6393f3af170c2959/dung-beetle.jar"/>
+	<classpathentry kind="output" path="dung/dung/6393f3af170c2959/compiled"/>
+</classpath>

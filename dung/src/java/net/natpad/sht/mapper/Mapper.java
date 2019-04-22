@@ -317,7 +317,7 @@ public class Mapper {
 			return new SimpleValue(name);
 		} else if (oclass.isPrimitive()) {
 			return new SimpleValue(""+object); 
-		} else if (oclass==String.class) {
+		} else if (oclass==String.class || oclass==Boolean.class || oclass==Integer.class || oclass==Long.class || oclass==Double.class || oclass==Float.class) {
 			return new SimpleValue(object.toString());
 		} else if (object instanceof List) {
 			List<Object> ll = (List<Object>) object;

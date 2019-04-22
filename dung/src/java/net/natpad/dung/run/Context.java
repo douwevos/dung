@@ -133,6 +133,7 @@ public class Context {
 								if (pkgConfig==null) {
 									pkgConfig = new PkgConfig();
 									pkgConfig.setpackage(packageName);
+									pkgConfig.setlinkstatic(mph.linkStatic);
 									pkgConfigMap.put(packageName, pkgConfig);
 								}
 								module.addDependency(pkgConfig);

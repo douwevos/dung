@@ -21,7 +21,9 @@ public class PkgConfig implements ICcConfigItem, IDependency {
 	private String pkgname;
 	private String pkgConfigSysRoot = null;
 	private String pkgConfigPath = null;
-//	private boolean pkgnameResolved = false;
+        private boolean linkstatic;
+
+	//	private boolean pkgnameResolved = false;
 
 	public PkgConfig() {
 		super();
@@ -30,7 +32,11 @@ public class PkgConfig implements ICcConfigItem, IDependency {
 	public void setpackage(String pkgname) {
 		this.pkgname = pkgname;
 	}
-	
+
+	public void setlinkstatic(boolean linkstatic) {
+	    this.linkstatic = linkstatic;
+	}
+
 	public void setPkgConfigSysRoot(String configSysRoot) {
 		pkgConfigSysRoot = configSysRoot;
 	}
@@ -189,14 +195,24 @@ public class PkgConfig implements ICcConfigItem, IDependency {
 	@SuppressWarnings("unchecked")
 	private void parseLinkerFlags(CcLinkerSettings linkerSettings, String pkgtext) {
 		String[] list = pkgtext.split(" ");
+		boolean didInit = false;
 		for(String iitem : list) {
 			if (iitem.startsWith("-l")) {
+			    if (!didInit && linkstatic) {
+			        didInit = true;
+			        linkerSettings.addArgument("-Wl,-Bstatic");
+			    }
 				linkerSettings.addLibName(iitem.substring(2));
 			} else if (iitem.startsWith("-L")) {
 				
 				linkerSettings.addLibSearchPath(iitem.substring(2));
 //				log("adding:"+iitem.substring(2), Project.MSG_VERBOSE);
 			}
+		}
+
+		if (didInit) {
+                    linkerSettings.addArgument("-Wl,-Bdynamic");
+		    
 		}
 	}
 
